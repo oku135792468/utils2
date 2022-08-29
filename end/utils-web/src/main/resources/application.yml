@@ -9,3 +9,17 @@ spring:
     productName-EN: myUtilis
     productName-ZN: 处理工具
     productDescri: 包括个人使用工具等等
+
+
+logging:
+  config: classpath:logback-config.xml
+  path: logs
+  ##  path: /app/logs/${spring.application.name}-${server.port}
+  file:
+    max-size: 30MB
+    max-history: 30
+  pattern:
+    file: '|%-12(%d{yyyy-MM-dd HH:mm:ss.SSS})-|%level-|%thread-|%c-|%msg%n'
+    level: info
+  level:
+    root: info  #debug会打印系统以及框架所有debug日志，可调整 pattern.level 打印项目debug级别日志，如需打印某个包可在logback-srping.xml中添加

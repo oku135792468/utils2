@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE xml>
+<configuration>
+	<!-- 属性文件:在配置文件中找到对应的配置项 -->
+	<springProperty scope="context" name="logging.path"
+		source="logging.path" />
+	<springProperty scope="context" name="logging.max-size"
+		source="logging.file.max-size" />
+	<springProperty scope="context" name="logging.max-history"
+		source="logging.file.max-history" />
+	<springProperty scope="context" name="logging.pattern"
+		source="logging.pattern.file" />
+	<springProperty scope="context" name="logging.level"
+		source="logging.pattern.level" />
+	<springProperty scope="context" name="logging.root"
+		source="logging.level.root" />
+    <springProperty scope="context" name="spring.application.ip"
+					source="spring.cloud.client.ip-address" />
+    <springProperty scope="context" name="spring.application.name"
+					source="spring.application.name" />
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+			<layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+				<Pattern>${logging.pattern}</Pattern>
+			</layout>
+		</encoder>
+	</appender>
+
+	<!-- INFO -->
+	<appender name="infoAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!-- 文件路径 -->
+		<file>${logging.path}/info.log</file>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- 文件名称 -->
+			<fileNamePattern>${logging.path}/info/info.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+			<!-- 文件最大保存历史数量 -->
+			<MaxHistory>${logging.max-history}</MaxHistory>
+			<maxFileSize>${logging.max-size}</maxFileSize>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+			<layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+				<Pattern>${logging.pattern}</Pattern>
+			</layout>
+		</encoder>
+	</appender>
+
+	<!-- ERROR -->
+	<appender name="errorAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!-- 文件路径 -->
+		<file>${logging.path}/error.log</file>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- 文件名称 -->
+			<fileNamePattern>${logging.path}/error/error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+			<!-- 文件最大保存历史数量 -->
+			<MaxHistory>${logging.max-history}</MaxHistory>
+			<!-- 超过50MB时，触发滚动策略 -->
+			<maxFileSize>${logging.max-size}</maxFileSize>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+			<layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+				<Pattern>${logging.pattern}</Pattern>
+			</layout>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+<!--	<logger name="com.lzy.myproject.mapper" level='DEBUG' />-->
+<!--	<logger name="org.springframework.cloud.gateway.filter.LoadBalancerClientFilter" level='trace'/>-->
+	<root level='${logging.root}' >
+		  <appender-ref ref="consoleAppender" />
+		<appender-ref ref="infoAppender" />
+		<appender-ref ref="errorAppender" />
+	</root>
+</configuration>
