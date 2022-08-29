@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact name="20220812:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/20220812_jar</output-path>
+    <root id="root">
+      <element id="archive" name="20220812.jar">
+        <element id="module-output" name="20220812" />
+      </element>
+      <element id="library" level="project" name="Maven: net.coobird:thumbnailator:0.4.8" />
+      <element id="library" level="project" name="Maven: cn.hutool:hutool-all:5.5.2" />
+    </root>
+  </artifact>
+</component>
