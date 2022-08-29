@@ -1,0 +1,11 @@
+#服务器配置
+server:
+  port: 8000
+spring:
+  application:
+    name: 处理工具
+    ip: 127.0.0.1
+    sercate: 工具
+    productName-EN: myUtilis
+    productName-ZN: 处理工具
+    productDescri: 包括个人使用工具等等
