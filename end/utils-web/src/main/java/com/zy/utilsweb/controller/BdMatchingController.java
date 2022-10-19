@@ -28,12 +28,17 @@ public class BdMatchingController {
 
             log.info("匹配标题: {}", title);
 
+            BdMatchBase.BdMatchBaseList.ContentList contentVoRes = new BdMatchBase.BdMatchBaseList.ContentList();
+
             for (BdMatchBase.BdMatchBaseList.ContentList contentVo : contentList) {
                 String content = (String) contentVo.getContent();
                 log.info("匹配内容: {}", content);
                 double rate = Utils.matchByTile(title, content);
                 log.info("匹配度: {}", rate);
                 contentVo.setContent(rate);
+                if (rate < 0.12) {
+                    contentList.remove(contentVo);
+                }
             }
         }
         return base;
