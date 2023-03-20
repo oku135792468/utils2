@@ -43,7 +43,7 @@ exports.init = (initParams, sendConfig) => {
         ...sendConfig
     }
 
-    axios.get(`${requestOptions.baseUrl}/auth/oauth/token?grant_type=client_credentials&client_id=${requestOptions.chnlCode}&client_secret=${requestOptions.chnlSecret}`).then(res => {
+    return axios.get(`${requestOptions.baseUrl}/auth/oauth/token?grant_type=client_credentials&client_id=${requestOptions.chnlCode}&client_secret=${requestOptions.chnlSecret}`).then(res => {
         if (res.data.access_token) {
             gatewayToken = res.data.access_token
             console.log('网关工具初始化成功!')
@@ -74,26 +74,25 @@ exports.gatewayPost = function (url, params, otherPostConfig) {
         let paramStr = sortParms(param)
         param.sign = sm2DoSignature(paramStr, requestOptions.clientSignPrivateKey)
         param.access_token = gatewayToken
+        return axios.post(`${requestOptions.baseUrl}/${url}`, param, {...config, ...otherPostConfig}).then(res => {
+            let responseData = res.data
+            if (responseData.responseData.sysHead) {
+                return responseData.responseData.sysHead
+            }
+            let oldParams = {...responseData}
+            delete responseData.sign
+            let paramstr = sortParms(responseData)
+            if (sm2DoVerifySignature(paramstr, oldParams.sign, requestOptions.serverSignPublicKey)) {
+                return JSON.parse(sm4Decrypt(responseData.responseData, encodeKey))
+            } else {
+                console.error('验签失败！')
+                return null;
+            }
+        }).catch(err => {
+            console.error('网关请求失败!', err)
+            return err;
+        })
     }
-    return axios.post(`${requestOptions.baseUrl}/${url}`, param, {...config, ...otherPostConfig}).then(res => {
-        let responseData = res.data
-        if (responseData.responseData.sysHead) {
-            return responseData.responseData.sysHead
-        }
-        let oldParams = {...responseData}
-        delete responseData.sign
-        let paramstr = sortParms(responseData)
-        if (sm2DoVerifySignature(paramstr, oldParams.sign, requestOptions.serverSignPublicKey)) {
-            let encodeKey = sm2Decrypt(responseData.encodeKey.substring(2), requestOptions.clientEncryptPrivateKey, requestOptions.encryptType)
-            return JSON.parse(sm4Decrypt(responseData.responseData, encodeKey))
-        } else {
-            console.error('验签失败！')
-            return null;
-        }
-    }).catch(err => {
-        console.error('网关请求失败!', err)
-        return err;
-    })
 }
 
 /**
