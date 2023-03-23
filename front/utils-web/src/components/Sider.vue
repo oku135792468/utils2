@@ -11,7 +11,7 @@
                 @open="handleOpen"
                 @close="handleClose"
         >
-            <el-menu-item v-for="(item,index) in routes" @click="menuClick(item)" :index="index">
+            <el-menu-item v-for="(item) in routes" @click="menuClick(item)">
                 <el-icon>
                     <component :is="item.meta.icon"/>
                 </el-icon>

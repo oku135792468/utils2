@@ -39,6 +39,8 @@
 </template>
 
 <script>
+    import {gatewayPost} from "@/js/gateway-util";
+
     export default {
         name: "SelectTable",
         data() {
@@ -69,7 +71,10 @@
                 }]
             }
         },
-        methods: {
+      mounted() {
+
+      },
+      methods: {
             toggleSelection() {
 
             },

@@ -55,6 +55,13 @@ exports.init = (initParams, sendConfig) => {
     })
 }
 
+/**
+ *
+ * @param url
+ * @param params
+ * @param otherPostConfig
+ * @returns {Promise<axios.AxiosResponse<any>>}
+ */
 exports.gatewayPost = function (url, params, otherPostConfig) {
     let param = {}
     if (requestOptions.encryptAlgo === 'SM4') {
@@ -67,7 +74,7 @@ exports.gatewayPost = function (url, params, otherPostConfig) {
             "requestData": requestData,
             "requestId": getSM4Key() + getSM4Key(),
             "serviceCode": params.code,
-            "timeStamp": new moment().format("YYYY-MM-DD HH:mm:ss"),
+            "timeStamp": new moment().format("YYYY-MM-DD HH:mm:ss.SSS"),
             "txBrNo": requestOptions.txBrNo,
             "version": params.version
         }
@@ -82,6 +89,7 @@ exports.gatewayPost = function (url, params, otherPostConfig) {
             let oldParams = {...responseData}
             delete responseData.sign
             let paramstr = sortParms(responseData)
+            let encodeKey = sm2Decrypt(oldParams.encodeKey.substring(2), requestOptions.clientEncryptPrivateKey, requestOptions.encryptType)
             if (sm2DoVerifySignature(paramstr, oldParams.sign, requestOptions.serverSignPublicKey)) {
                 return JSON.parse(sm4Decrypt(responseData.responseData, encodeKey))
             } else {
@@ -101,7 +109,7 @@ exports.gatewayPost = function (url, params, otherPostConfig) {
  * @param key
  * @returns {{encryptAlgo: string, timeStamp: string, chnlCode: string, serviceCode: *, requestId: string, txBrNo: string, requestData: String, encodeKey: (string|null), version}}
  */
-export function gatewayEncrypt(params, key) {
+exports.gatewayEncrypt = (params, key) => {
     let encodeKey = key || getSM4Key()
     let requestData = sm4Encrypt(JSON.stringify(params.data), encodeKey)
     let param = {
@@ -150,7 +158,7 @@ exports.gatewayDecrypt = function (params) {
     let paramstr = sortParms(params)
     if (sm2DoVerifySignature(paramstr, oldParams.sign, requestOptions.serverSignPublicKey)) {
         let encodeKey = sm2Decrypt(params.encodeKey.substring(2), requestOptions.clientEncryptPrivateKey, requestOptions.encryptType)
-        return JSON.parse(sm4Decrypt(params.responseData, encodeKey))
+        return sm4Decrypt(params.responseData, encodeKey)
     } else {
         return null;
     }
