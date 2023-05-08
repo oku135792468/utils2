@@ -27,14 +27,14 @@
 
 <script>
 import Sider from '/src/components/Sider'
+import axios from "axios";
 
 export default {
   name: "MyHome",
   components: {
     Sider
   },
-  async mounted() {
-
+  mounted() {
   },
   methods: {}
 }

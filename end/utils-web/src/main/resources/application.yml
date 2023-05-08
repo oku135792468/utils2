@@ -23,3 +23,7 @@ logging:
     level: info
   level:
     root: info  #debug会打印系统以及框架所有debug日志，可调整 pattern.level 打印项目debug级别日志，如需打印某个包可在logback-srping.xml中添加
+
+ScheduledOptions:
+  #cron表达式
+  urlToBd: "0/5 * * * * ? "
