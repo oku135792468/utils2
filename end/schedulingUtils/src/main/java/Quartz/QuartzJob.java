@@ -82,15 +82,23 @@ public class QuartzJob implements Job {
                     Process exec = runtime.exec(cmd);
                     //取得命令结果的输出流
                     InputStream fis = exec.getInputStream();
+                    InputStream err = exec.getErrorStream();
                     //用一个读输出流类去读
-                    InputStreamReader isr = new InputStreamReader(fis);
+                    InputStreamReader isr = new InputStreamReader(fis, "gbk");
+                    InputStreamReader isrErr = new InputStreamReader(err, "gbk");
                     //用缓冲器读行
                     BufferedReader br = new BufferedReader(isr);
+                    BufferedReader brErr = new BufferedReader(isrErr);
                     String line = null;
                     //直到读完为止
                     while ((line = br.readLine()) != null) {
-                        log.info("执行结果:{}", line);
+                        log.info("执行成功结果:{}", line);
                     }
+                    String detail = "";
+                    while ((line = brErr.readLine()) != null) {
+                        detail = detail + line;
+                    }
+                    log.info("执行详情:{}", detail.replace("\r", ""));
                 } catch (IOException e) {
                     e.printStackTrace();
                     log.error("【推送命令执行失败!】推送地址为:{}", url, e);
