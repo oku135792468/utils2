@@ -1,0 +1,4 @@
+https://www.fengwomeiji.cn/sitemap/map.txt,https://www.fengwomeiji.cn/sitemap/map.txt
+http://data.zz.baidu.com/urls?site=https://www.fengwomeiji.cn&token=CioEhbNsWeylrn2j
+10
+0 0 0/1 * * ?
